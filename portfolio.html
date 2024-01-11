@@ -71,14 +71,15 @@
       color: #fff;    
     }
 
-        .gallery {
+    .gallery {
       display: flex;
       flex-wrap: wrap;
       max-width: 800px;
+      justify-content: space-around; /* Center the gallery horizontally with spacing */
     }
 
     .thumbnail {
-      width: 150px;
+      width: calc(33.33% - 10px); /* Adjusted width for two thumbnails in one row with margin */
       height: 150px;
       overflow: hidden;
       position: relative;
