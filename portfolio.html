@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sayuri Miyatake</title>
+  <link rel="stylesheet" href="path/to/lightbox.min.css">
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -11,6 +12,32 @@
       padding: 0;
       box-sizing: border-box;
       background-color: #f7f7f7;
+    }
+
+        .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 800px;
+    }
+
+    .thumbnail {
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      position: relative;
+      margin: 5px;
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 50%;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .thumbnail:hover img {
+      transform: scale(1.1);
     }
 
     header {
@@ -120,14 +147,46 @@
 
     <section id="portfolio">
       <h2>写真集</h2>
-      <p>
-        Here are some of my recent projects:
-        <ul>
-          <li><a href="#">Project 1</a></li>
-          <li><a href="#">Project 2</a></li>
-          <li><a href="#">Project 3</a></li>
-        </ul>
-      </p>
+  <div class="gallery">
+    <!-- Use sample image URLs for testing -->
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 1')">
+      <img src="https://via.placeholder.com/150" alt="Image 1">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 2')">
+      <img src="https://via.placeholder.com/150" alt="Image 2">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 1')">
+      <img src="https://via.placeholder.com/150" alt="Image 1">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 2')">
+      <img src="https://via.placeholder.com/150" alt="Image 2">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 1')">
+      <img src="https://via.placeholder.com/150" alt="Image 1">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 2')">
+      <img src="https://via.placeholder.com/150" alt="Image 2">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 1')">
+      <img src="https://via.placeholder.com/150" alt="Image 1">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 2')">
+      <img src="https://via.placeholder.com/150" alt="Image 2">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 1')">
+      <img src="https://via.placeholder.com/150" alt="Image 1">
+    </div>
+    <div class="thumbnail" onclick="openLightbox('https://via.placeholder.com/800', 'Image 2')">
+      <img src="https://via.placeholder.com/150" alt="Image 2">
+    </div>
+    <!-- Add more thumbnails as needed -->
+
+    <!-- Repeat the above structure for each image -->
+  </div>
+
+  <div id="lightbox" onclick="closeLightbox()">
+    <img id="lightboxImage" src="" alt="Enlarged Image">
+  </div>
     </section>
 
     <section id="contact">
@@ -174,6 +233,6 @@
       checkPosition();
     });
   </script>
-
+  <script src="path/to/lightbox.min.js"></script>
 </body>
 </html>
