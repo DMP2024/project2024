@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
   <title>Sayuri Miyatake</title>
   <style>
     body {
@@ -71,21 +75,21 @@
       color: #fff;    
     }
 
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      max-width: 800px;
-      justify-content: space-around; /* Center the gallery horizontally with spacing */
-    }
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin: 0 auto; /* Center the gallery horizontally */
+}
 
-    .thumbnail {
-      width: calc(33.33% - 10px); /* Adjusted width for two thumbnails in one row with margin */
-      height: 150px;
-      overflow: hidden;
-      position: relative;
-      margin: 5px;
-      cursor: pointer;
-    }
+.thumbnail {
+  width: calc(33.33% - 10px);
+  height: 150px;
+  overflow: hidden;
+  position: relative;
+  margin: 5px;
+  cursor: pointer;
+}
 
     .thumbnail img {
       width: 100%;
@@ -169,6 +173,10 @@
 
     <section id="portfolio">
       <h2>写真集</h2>
+
+<div id="swiper-container" class="swiper-container">
+<div class="swiper-wrapper">
+    
       <p>
   <div class="gallery">
     <!-- Use sample image URLs for testing -->
@@ -209,6 +217,14 @@
     <img id="lightboxImage" src="" alt="Enlarged Image">
   </div>
       </p>
+  
+  </div>
+  <!-- Add Pagination -->
+  <div class="swiper-pagination"></div>
+  <!-- Add Navigation -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  
     </section>
 
     <section id="contact">
@@ -264,6 +280,26 @@
     function closeLightbox() {
       document.getElementById('lightbox').style.display = 'none';
     }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const mySwiper = new Swiper("#swiper-container", {
+    // Optional parameters
+    direction: "horizontal",
+    loop: true,
+
+    // If we need pagination
+    pagination: {
+      el: ".swiper-pagination",
+    },
+
+    // Navigation arrows
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+});
+    
   </script>
 
 </body>
