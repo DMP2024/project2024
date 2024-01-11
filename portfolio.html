@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sayuri Miyatake - Personal Branding</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background-color: #f7f7f7;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #444;
+      padding: 10px;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s, transform 0.8s;
+    }
+
+    section.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sayuri Miyatake</h1>
+    <p>Personal Branding</p>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="container">
+    <section id="about" class="active">
+      <h2>About Me</h2>
+      <p>
+        I am Sayuri Miyatake, a passionate and creative individual with a love for technology and design.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget justo nec urna vestibulum semper.
+        Vestibulum auctor elit nec nunc fermentum, in interdum tortor varius. Suspendisse potenti. Nullam vel
+        efficitur odio. Quisque consectetur tortor eu massa vehicula, a fermentum velit tincidunt. Suspendisse
+        cursus sagittis nisi, vel fringilla lectus.
+      </p>
+    </section>
+
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul>
+        <li>Web Development</li>
+        <li>UI/UX Design</li>
+        <li>Graphic Design</li>
+        <li>JavaScript</li>
+        <li>HTML/CSS</li>
+        <li>React.js</li>
+      </ul>
+    </section>
+
+    <section id="portfolio">
+      <h2>Portfolio</h2>
+      <p>
+        Here are some of my recent projects:
+        <ul>
+          <li><a href="#">Project 1</a></li>
+          <li><a href="#">Project 2</a></li>
+          <li><a href="#">Project 3</a></li>
+        </ul>
+      </p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>
+        If you have any inquiries or would like to collaborate, feel free to reach out to me:
+        <br>
+        Email: <a href="mailto:sayuri@example.com">sayuri@example.com</a>
+        <br>
+        Phone: +123 456 7890
+      </p>
+    </section>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Sayuri Miyatake. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const sections = document.querySelectorAll("section");
+
+      function checkPosition() {
+        sections.forEach((section) => {
+          const position = section.getBoundingClientRect();
+
+          if (position.top >= 0 && position.bottom <= window.innerHeight) {
+            section.classList.add("active");
+          } else {
+            section.classList.remove("active");
+          }
+        });
+      }
+
+      window.addEventListener("scroll", checkPosition);
+      window.addEventListener("resize", checkPosition);
+
+      // Initial check
+      checkPosition();
+    });
+  </script>
+
+</body>
+</html>
