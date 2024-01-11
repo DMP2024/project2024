@@ -155,29 +155,46 @@
     <p>&copy; 2024 Sayuri Miyatake. All rights reserved.</p>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const sections = document.querySelectorAll("section");
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const sections = document.querySelectorAll("section");
+    const navLinks = document.querySelectorAll("nav a");
 
-      function checkPosition() {
-        sections.forEach((section) => {
-          const position = section.getBoundingClientRect();
+    function checkPosition() {
+      let scrollPosition = window.scrollY || document.documentElement.scrollTop;
 
-          if (position.top >= 0 && position.bottom <= window.innerHeight) {
-            section.classList.add("active");
-          } else {
-            section.classList.remove("active");
-          }
-        });
-      }
+      sections.forEach((section) => {
+        const sectionTop = section.offsetTop - 80; // Adjust this value if needed
+        const sectionBottom = sectionTop + section.offsetHeight;
 
-      window.addEventListener("scroll", checkPosition);
-      window.addEventListener("resize", checkPosition);
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          section.classList.add("active");
+        } else {
+          section.classList.remove("active");
+        }
+      });
 
-      // Initial check
-      checkPosition();
-    });
-  </script>
+      updateNavLinks();
+    }
+
+    function updateNavLinks() {
+      navLinks.forEach((link) => {
+        const target = document.querySelector(link.getAttribute("href"));
+        if (target.classList.contains("active")) {
+          link.classList.add("active");
+        } else {
+          link.classList.remove("active");
+        }
+      });
+    }
+
+    window.addEventListener("scroll", checkPosition);
+    window.addEventListener("resize", checkPosition);
+
+    // Initial check
+    checkPosition();
+  });
+</script>
 
 </body>
 </html>
