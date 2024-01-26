@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chart</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<table id="data-table">
+    <thead>
+        <tr>
+            <th onclick="sortTable(0)">ID</th>
+            <th onclick="sortTable(1)">名前</th>
+            <th onclick="sortTable(2)">IBO</th>
+            <!-- Add 90 columns with today's date -->
+            <th onclick="sortTable(3)">01/26</th>
+            <!-- ... Repeat for other dates ... -->
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Add your data rows here -->
+        <tr>
+            <td>1</td>
+            <td>John Doe</td>
+            <td>123</td>
+            <!-- Add data for other columns -->
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Jane Doe</td>
+            <td>456</td>
+            <!-- Add data for other columns -->
+        </tr>
+        <!-- ... Repeat for other rows ... -->
+    </tbody>
+</table>
+
+<script>
+    function sortTable(columnIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("data-table");
+        switching = true;
+        
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            
+            for (i = 1; i < rows.length - 1; i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[columnIndex];
+                y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+                
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
