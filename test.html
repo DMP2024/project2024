@@ -1,3 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>連絡管理</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        .sort-button {
+            cursor: pointer;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #007bff;
+            color: #007bff;
+            background-color: #fff;
+        }
+
+        .color-button,
+        .action-button {
+            cursor: pointer;
+            padding: 8px;
+            text-align: center;
+            border: none;
+            color: #fff;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <label for="searchColumn">絞り込み:</label>
+    <select id="searchColumn">
+        <option value="0">会員ID</option>
+        <option value="1">名前</option>
+        <option value="2">IBO</option>
+        <option value="3">日付</option>
+        <option value="4">回数</option>
+    </select>
+
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="検索">
+
+    <button onclick="addRow()">追加</button>
+
+    <!-- Add file input for CSV upload -->
+    <input type="file" id="csvInput" accept=".csv" onchange="handleFileUpload()">
+
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>
+                    <div>会員ID
+                        <span onclick="sortTable(0, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(0, 'desc')" class="sort-button">↓</span>
+                    </div>
+                </th>
+                <th>
+                    <div>名前
+                        <span onclick="sortTable(1, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(1, 'desc')" class="sort-button">↓</span>
+                    </div>
+                </th>
+                <th>
+                    <div>IBO名
+                        <span onclick="sortTable(2, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(2, 'desc')" class="sort-button">↓</span>
+                    </div>
+                </th>
+                <th>
+                    <div>日付
+                        <span onclick="sortTable(3, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(3, 'desc')" class="sort-button">↓</span>
+                    </div>
+                </th>
+                <th>
+                    <div>回数
+                        <span onclick="sortTable(4, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(4, 'desc')" class="sort-button">↓</span>
+                    </div>
+                </th>
+                <th>編集</th>
+                <!-- Add more columns with today's date if needed -->
+                <!-- ... Repeat for other dates ... -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add 10 sample data rows -->
+            <tr>
+                <td>1</td>
+                <td>John Doe</td>
+                <td>123</td>
+                <td>
+                    <button class="color-button" onclick="changeColor(this)">日付</button>
+                </td>
+                <td>0</td>
+                <td>
+                    <button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button"
+                        onclick="deleteRow(this)">削除</button>
+                </td>
+            </tr>
+            <!-- Add more rows if needed -->
+        </tbody>
+    </table>
 <script>
     var sortColumnIndex = -1; // -1 indicates no sorting
     var sortOrder = 1; // 1 for ascending, -1 for descending
@@ -223,3 +343,8 @@
         saveDataToStorage();
     }
 </script>
+
+
+</body>
+
+</html>
