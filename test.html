@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         table {
             font-family: Arial, sans-serif;
@@ -52,10 +53,12 @@
         <option value="1">名前</option>
         <option value="2">IBO</option>
         <option value="3">日付</option>
+        <option value="5">回数</option>
     </select>
 
     <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="検索">
 
+    <input type="file" id="csvInput" accept=".csv" onchange="handleFileUpload()">
     <button onclick="addRow()">追加</button>
 
     <table id="data-table">
@@ -63,30 +66,35 @@
             <tr>
                 <th>
                     <div>会員ID
-                        <span onclick="sortTable(0, 'asc')" class="sort-button">昇順</span>
-                        <span onclick="sortTable(0, 'desc')" class="sort-button">降順</span>
+                        <span onclick="sortTable(0, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(0, 'desc')" class="sort-button">↓</span>
                     </div>
                 </th>
                 <th>
                     <div>名前
-                        <span onclick="sortTable(1, 'asc')" class="sort-button">昇順</span>
-                        <span onclick="sortTable(1, 'desc')" class="sort-button">降順</span>
+                        <span onclick="sortTable(1, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(1, 'desc')" class="sort-button">↓</span>
                     </div>
                 </th>
                 <th>
                     <div>IBO名
-                        <span onclick="sortTable(2, 'asc')" class="sort-button">昇順</span>
-                        <span onclick="sortTable(2, 'desc')" class="sort-button">降順</span>
+                        <span onclick="sortTable(2, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(2, 'desc')" class="sort-button">↓</span>
                     </div>
                 </th>
                 <th>
                     <div>日付
-                        <span onclick="sortTable(3, 'asc')" class="sort-button">昇順</span>
-                        <span onclick="sortTable(3, 'desc')" class="sort-button">降順</span>
+                        <span onclick="sortTable(3, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(3, 'desc')" class="sort-button">↓</span>
+                    </div>
+                </th>
+                <th>
+                    <div>回数
+                        <span onclick="sortTable(5, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(5, 'desc')" class="sort-button">↓</span>
                     </div>
                 </th>
                 <th>編集</th>
-                <th>回数</th>
                 <!-- Add more columns with today's date if needed -->
                 <!-- ... Repeat for other dates ... -->
             </tr>
@@ -100,10 +108,10 @@
                 <td>
                     <button class="color-button" onclick="changeColor(this)">日付</button>
                 </td>
+                <td>0</td>
                 <td>
                     <button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>
                 </td>
-                <td>0</td>
             </tr>
             <!-- Add more rows if needed -->
         </tbody>
@@ -112,6 +120,23 @@
     <script>
         var sortColumnIndex = -1; // -1 indicates no sorting
         var sortOrder = 1; // 1 for ascending, -1 for descending
+
+        // Load data from localStorage on page load
+        loadDataFromStorage();
+
+        function saveDataToStorage() {
+            // Get the table HTML and save it to localStorage
+            var tableHtml = document.getElementById("data-table").outerHTML;
+            localStorage.setItem("data-table", tableHtml);
+        }
+
+        function loadDataFromStorage() {
+            // Retrieve table HTML from localStorage and set it to the data-table element
+            var tableHtml = localStorage.getItem("data-table");
+            if (tableHtml) {
+                document.getElementById("data-table").outerHTML = tableHtml;
+            }
+        }
 
         function sortTable(columnIndex, order) {
             var table, rows, switching, i, x, y, shouldSwitch;
@@ -128,7 +153,7 @@
                     y = rows[i + 1].getElementsByTagName("td")[columnIndex];
 
                     var compare;
-                    if (columnIndex === 0 || columnIndex === 2 || columnIndex === 6) {
+                    if (columnIndex === 0 || columnIndex === 2 || columnIndex === 6 || columnIndex === 5) {
                         compare = parseFloat(x.innerHTML) - parseFloat(y.innerHTML);
                     } else if (columnIndex === 3) { // Date column
                         compare = new Date(x.innerHTML) - new Date(y.innerHTML);
@@ -161,6 +186,9 @@
                 sortOrder = 1;
                 sortColumnIndex = columnIndex;
             }
+
+            // Save data to localStorage after sorting
+            saveDataToStorage();
         }
 
         function searchTable() {
@@ -191,9 +219,18 @@
 
             // Update click count in the corresponding row
             var row = button.parentNode.parentNode;
-            var clickCountCell = row.cells[row.cells.length - 1];
+            var clickCountCell = row.cells[row.cells.length - 2]; // Adjusted index for count cell
             var currentClickCount = parseInt(clickCountCell.innerHTML);
+
+            // Check if the current count is a valid number, use 0 if not
+            if (isNaN(currentClickCount)) {
+                currentClickCount = 0;
+            }
+
             clickCountCell.innerHTML = currentClickCount + 1;
+
+            // Save data to localStorage after modification
+            saveDataToStorage();
         }
 
         function addRow() {
@@ -210,9 +247,12 @@
             cell1.innerHTML = "会員ID"; // ID
             cell2.innerHTML = "名前"; // Name
             cell3.innerHTML = "IBO名"; // IBO
-            cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>'; // 日付 button
-            cell5.innerHTML = '<button class="action-button" onclick="editRow(this)">Edit</button> <button class="action-button" onclick="deleteRow(this)">Delete</button>'; // Actions buttons
-            cell6.innerHTML = '0'; // Count
+            cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>';
+            cell5.innerHTML = '0';
+            cell6.innerHTML = '<button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>';
+
+            // Save data to localStorage after adding a row
+            saveDataToStorage();
         }
 
         function editRow(button) {
@@ -225,11 +265,57 @@
                     cells[i].innerHTML = newValue;
                 }
             }
+
+            // Save data to localStorage after modification
+            saveDataToStorage();
         }
 
         function deleteRow(button) {
             var row = button.parentNode.parentNode;
             row.parentNode.removeChild(row);
+
+            // Save data to localStorage after deletion
+            saveDataToStorage();
+        }
+
+        function handleFileUpload() {
+            var fileInput = document.getElementById('csvInput');
+            var file = fileInput.files[0];
+
+            if (file) {
+                Papa.parse(file, {
+                    header: true,
+                    dynamicTyping: true,
+                    complete: function (results) {
+                        addRowsFromCSV(results.data);
+                    }
+                });
+            }
+        }
+
+        function addRowsFromCSV(data) {
+            var table = document.getElementById("data-table").getElementsByTagName('tbody')[0];
+
+            for (var i = 0; i < data.length; i++) {
+                var newRow = table.insertRow(table.rows.length);
+
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                var cell3 = newRow.insertCell(2);
+                var cell4 = newRow.insertCell(3);
+                var cell5 = newRow.insertCell(4);
+                var cell6 = newRow.insertCell(5);
+
+                cell1.innerHTML = data[i]['会員ID'] || '会員ID';
+                cell2.innerHTML = data[i]['名前'] || '名前';
+                cell3.innerHTML = data[i]['IBO名'] || 'IBO名';
+                cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>';
+                cell5.innerHTML = '0';
+                cell6.innerHTML = '<button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>';
+            }
+
+            // Save data to localStorage after adding rows
+            saveDataToStorage();
         }
     </script>
 
