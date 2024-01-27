@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,8 @@
             width: 100%;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
@@ -20,97 +22,217 @@
         th {
             cursor: pointer;
         }
+
+        .sort-button {
+            cursor: pointer;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #007bff;
+            color: #007bff;
+            background-color: #fff;
+        }
+
+        .color-button,
+        .action-button {
+            cursor: pointer;
+            padding: 8px;
+            text-align: center;
+            border: none;
+            color: #fff;
+            background-color: #007bff;
+        }
     </style>
 </head>
+
 <body>
 
-<label for="searchColumn">Select Column:</label>
-<select id="searchColumn">
-    <option value="0">ID</option>
-    <option value="1">名前</option>
-    <option value="2">IBO</option>
-</select>
+    <label for="searchColumn">絞り込み:</label>
+    <select id="searchColumn">
+        <option value="0">会員ID</option>
+        <option value="1">名前</option>
+        <option value="2">IBO</option>
+        <option value="3">日付</option>
+    </select>
 
-<input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search">
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="検索">
 
-<table id="data-table">
-    <thead>
-        <tr>
-            <th onclick="sortTable(0)">ID</th>
-            <th onclick="sortTable(1)">名前</th>
-            <th onclick="sortTable(2)">IBO</th>
-            <!-- Add 90 columns with today's date -->
-            <th onclick="sortTable(3)">01/26</th>
-            <!-- ... Repeat for other dates ... -->
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Add your data rows here -->
-        <tr>
-            <td>1</td>
-            <td>John Doe</td>
-            <td>123</td>
-            <!-- Add data for other columns -->
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Jane Doe</td>
-            <td>456</td>
-            <!-- Add data for other columns -->
-        </tr>
-        <!-- ... Repeat for other rows ... -->
-    </tbody>
-</table>
+    <button onclick="addRow()">追加</button>
 
-<script>
-    function sortTable(columnIndex) {
-        var table, rows, switching, i, x, y, shouldSwitch;
-        table = document.getElementById("data-table");
-        switching = true;
-        
-        while (switching) {
-            switching = false;
-            rows = table.rows;
-            
-            for (i = 1; i < rows.length - 1; i++) {
-                shouldSwitch = false;
-                x = rows[i].getElementsByTagName("td")[columnIndex];
-                y = rows[i + 1].getElementsByTagName("td")[columnIndex];
-                
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true;
-                    break;
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>
+                    <div>会員ID
+                        <span onclick="sortTable(0, 'asc')" class="sort-button">昇順</span>
+                        <span onclick="sortTable(0, 'desc')" class="sort-button">降順</span>
+                    </div>
+                </th>
+                <th>
+                    <div>名前
+                        <span onclick="sortTable(1, 'asc')" class="sort-button">昇順</span>
+                        <span onclick="sortTable(1, 'desc')" class="sort-button">降順</span>
+                    </div>
+                </th>
+                <th>
+                    <div>IBO名
+                        <span onclick="sortTable(2, 'asc')" class="sort-button">昇順</span>
+                        <span onclick="sortTable(2, 'desc')" class="sort-button">降順</span>
+                    </div>
+                </th>
+                <th>
+                    <div>日付
+                        <span onclick="sortTable(3, 'asc')" class="sort-button">昇順</span>
+                        <span onclick="sortTable(3, 'desc')" class="sort-button">降順</span>
+                    </div>
+                </th>
+                <th>編集</th>
+                <th>回数</th>
+                <!-- Add more columns with today's date if needed -->
+                <!-- ... Repeat for other dates ... -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add 10 sample data rows -->
+            <tr>
+                <td>1</td>
+                <td>John Doe</td>
+                <td>123</td>
+                <td>
+                    <button class="color-button" onclick="changeColor(this)">日付</button>
+                </td>
+                <td>
+                    <button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>
+                </td>
+                <td>0</td>
+            </tr>
+            <!-- Add more rows if needed -->
+        </tbody>
+    </table>
+
+    <script>
+        var sortColumnIndex = -1; // -1 indicates no sorting
+        var sortOrder = 1; // 1 for ascending, -1 for descending
+
+        function sortTable(columnIndex, order) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("data-table");
+            switching = true;
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+
+                for (i = 1; i < rows.length - 1; i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[columnIndex];
+                    y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+                    var compare;
+                    if (columnIndex === 0 || columnIndex === 2 || columnIndex === 6) {
+                        compare = parseFloat(x.innerHTML) - parseFloat(y.innerHTML);
+                    } else if (columnIndex === 3) { // Date column
+                        compare = new Date(x.innerHTML) - new Date(y.innerHTML);
+                    } else if (columnIndex === 4) {
+                        compare = x.innerHTML.localeCompare(y.innerHTML);
+                    } else {
+                        compare = x.innerHTML - y.innerHTML;
+                    }
+
+                    if (order === 'desc') {
+                        compare *= -1;
+                    }
+
+                    if (sortOrder * compare > 0) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
                 }
             }
-            
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
+
+            // Toggle sort order for the next click on the same column
+            if (sortColumnIndex === columnIndex) {
+                sortOrder *= -1;
+            } else {
+                sortOrder = 1;
+                sortColumnIndex = columnIndex;
             }
         }
-    }
 
-    function searchTable() {
-        var input, filter, table, tr, td, i, columnIndex;
-        input = document.getElementById("searchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("data-table");
-        tr = table.getElementsByTagName("tr");
-        columnIndex = document.getElementById("searchColumn").value;
+        function searchTable() {
+            var input, filter, table, tr, td, i, columnIndex;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("data-table");
+            tr = table.getElementsByTagName("tr");
+            columnIndex = document.getElementById("searchColumn").value;
 
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[columnIndex];
-            
-            if (td) {
-                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[columnIndex];
+
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
         }
-    }
-</script>
+
+        function changeColor(button) {
+            var currentDate = new Date().toLocaleDateString();
+            button.style.backgroundColor = "#28a745"; // Change color to green
+            button.innerHTML = currentDate; // Update button text
+
+            // Update click count in the corresponding row
+            var row = button.parentNode.parentNode;
+            var clickCountCell = row.cells[row.cells.length - 1];
+            var currentClickCount = parseInt(clickCountCell.innerHTML);
+            clickCountCell.innerHTML = currentClickCount + 1;
+        }
+
+        function addRow() {
+            var table = document.getElementById("data-table").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+            var cell5 = newRow.insertCell(4);
+            var cell6 = newRow.insertCell(5);
+
+            cell1.innerHTML = "会員ID"; // ID
+            cell2.innerHTML = "名前"; // Name
+            cell3.innerHTML = "IBO名"; // IBO
+            cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>'; // 日付 button
+            cell5.innerHTML = '<button class="action-button" onclick="editRow(this)">Edit</button> <button class="action-button" onclick="deleteRow(this)">Delete</button>'; // Actions buttons
+            cell6.innerHTML = '0'; // Count
+        }
+
+        function editRow(button) {
+            var row = button.parentNode.parentNode;
+            var cells = row.getElementsByTagName("td");
+
+            for (var i = 0; i < cells.length - 1; i++) { // Exclude the "Actions" and "Count" columns from being editable
+                if (i !== 3 && i !== 4) { // Exclude the "日付" column (index 3) and "Actions" column (index 4) from being editable
+                    var newValue = prompt("Enter new value for column " + (i + 1), cells[i].innerHTML);
+                    cells[i].innerHTML = newValue;
+                }
+            }
+        }
+
+        function deleteRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
 
 </body>
+
 </html>
