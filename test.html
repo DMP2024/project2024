@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chart</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <title>連絡管理</title>
     <style>
         table {
             font-family: Arial, sans-serif;
@@ -53,13 +52,15 @@
         <option value="1">名前</option>
         <option value="2">IBO</option>
         <option value="3">日付</option>
-        <option value="5">回数</option>
+        <option value="4">回数</option>
     </select>
 
     <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="検索">
 
-    <input type="file" id="csvInput" accept=".csv" onchange="handleFileUpload()">
     <button onclick="addRow()">追加</button>
+
+    <!-- Add file input for CSV upload -->
+    <input type="file" id="csvInput" accept=".csv" onchange="handleFileUpload()">
 
     <table id="data-table">
         <thead>
@@ -90,8 +91,8 @@
                 </th>
                 <th>
                     <div>回数
-                        <span onclick="sortTable(5, 'asc')" class="sort-button">↑</span>
-                        <span onclick="sortTable(5, 'desc')" class="sort-button">↓</span>
+                        <span onclick="sortTable(4, 'asc')" class="sort-button">↑</span>
+                        <span onclick="sortTable(4, 'desc')" class="sort-button">↓</span>
                     </div>
                 </th>
                 <th>編集</th>
@@ -110,7 +111,8 @@
                 </td>
                 <td>0</td>
                 <td>
-                    <button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>
+                    <button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button"
+                        onclick="deleteRow(this)">削除</button>
                 </td>
             </tr>
             <!-- Add more rows if needed -->
@@ -153,12 +155,13 @@
                     y = rows[i + 1].getElementsByTagName("td")[columnIndex];
 
                     var compare;
-                    if (columnIndex === 0 || columnIndex === 2 || columnIndex === 6 || columnIndex === 5) {
+
+                    if (columnIndex === 1) { // "名前" column
+                        compare = x.innerHTML.localeCompare(y.innerHTML);
+                    } else if (columnIndex === 4) { // "回数" column
                         compare = parseFloat(x.innerHTML) - parseFloat(y.innerHTML);
                     } else if (columnIndex === 3) { // Date column
                         compare = new Date(x.innerHTML) - new Date(y.innerHTML);
-                    } else if (columnIndex === 4) {
-                        compare = x.innerHTML.localeCompare(y.innerHTML);
                     } else {
                         compare = x.innerHTML - y.innerHTML;
                     }
@@ -247,9 +250,12 @@
             cell1.innerHTML = "会員ID"; // ID
             cell2.innerHTML = "名前"; // Name
             cell3.innerHTML = "IBO名"; // IBO
-            cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>';
-            cell5.innerHTML = '0';
-            cell6.innerHTML = '<button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>';
+            cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>'; // 日付 button
+            cell5.innerHTML = '0'; // Count
+            cell6.innerHTML = '<button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>'; // Actions buttons
+
+            // Sort the table after adding a new row
+            sortTable(document.getElementById("searchColumn").value, sortOrder === 1 ? 'asc' : 'desc');
 
             // Save data to localStorage after adding a row
             saveDataToStorage();
@@ -278,41 +284,53 @@
             saveDataToStorage();
         }
 
+        // Function to handle CSV file upload
         function handleFileUpload() {
-            var fileInput = document.getElementById('csvInput');
-            var file = fileInput.files[0];
+            var input = document.getElementById('csvInput');
+            var file = input.files[0];
 
             if (file) {
-                Papa.parse(file, {
-                    header: true,
-                    dynamicTyping: true,
-                    complete: function (results) {
-                        addRowsFromCSV(results.data);
-                    }
-                });
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var csvData = e.target.result;
+                    addRowsFromCSV(csvData);
+                };
+
+                reader.readAsText(file);
             }
         }
 
-        function addRowsFromCSV(data) {
+        // Function to add rows from CSV data
+        function addRowsFromCSV(csvData) {
             var table = document.getElementById("data-table").getElementsByTagName('tbody')[0];
+            var rows = csvData.split('\n');
 
-            for (var i = 0; i < data.length; i++) {
+            for (var i = 0; i < rows.length; i++) {
+                var columns = rows[i].split(',');
                 var newRow = table.insertRow(table.rows.length);
 
-                var cell1 = newRow.insertCell(0);
-                var cell2 = newRow.insertCell(1);
-                var cell3 = newRow.insertCell(2);
-                var cell4 = newRow.insertCell(3);
-                var cell5 = newRow.insertCell(4);
-                var cell6 = newRow.insertCell(5);
+                // Add data to the first three columns
+                for (var j = 0; j < Math.min(columns.length, 3); j++) {
+                    var cell = newRow.insertCell(j);
+                    cell.innerHTML = columns[j];
+                }
 
-                cell1.innerHTML = data[i]['会員ID'] || '会員ID';
-                cell2.innerHTML = data[i]['名前'] || '名前';
-                cell3.innerHTML = data[i]['IBO名'] || 'IBO名';
-                cell4.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>';
-                cell5.innerHTML = '0';
-                cell6.innerHTML = '<button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>';
+                // Add default values for the remaining columns
+                for (var k = Math.min(columns.length, 3); k < 6; k++) {
+                    var cell = newRow.insertCell(k);
+                    if (k === 3) {
+                        cell.innerHTML = '<button class="color-button" onclick="changeColor(this)">日付</button>';
+                    } else if (k === 4) {
+                        cell.innerHTML = '0';
+                    } else if (k === 5) {
+                        cell.innerHTML = '<button class="action-button" onclick="editRow(this)">編集</button> <button class="action-button" onclick="deleteRow(this)">削除</button>';
+                    }
+                }
             }
+
+            // Sort the table after adding rows
+            sortTable(document.getElementById("searchColumn").value, sortOrder === 1 ? 'asc' : 'desc');
 
             // Save data to localStorage after adding rows
             saveDataToStorage();
